@@ -33,7 +33,7 @@ class App extends Component {
         company: student.company,
         email: student.email,
         skill: student.skill,
-        gradeArray: student.grades,
+        grades: student.grades,
         key: student.id,
         tags: []
       }
@@ -56,7 +56,11 @@ class App extends Component {
 
   handleNameChange = (e) => {
     const search = e.target.value.toLowerCase();
-    const results = this.state.students.filter(this.props.students.firstName.includes(search) || this.props.students.lastName.includes(search))
+    const results = this.state.students.filter((students) => {
+      return (
+        students.firstName.includes(search) || students.lastName.includes(search)
+      )
+    })
     this.setState({
       filteredList: results
     })
@@ -65,7 +69,7 @@ class App extends Component {
   handleTagChange = (e) => {
     const search = e.target.value.toLowerCase();
     let tagMatchList = this.state.students;
-    let filteredList = this.state.students;
+    let results = this.state.students;
 
 
 
@@ -78,7 +82,9 @@ class App extends Component {
       })
     })
 
-    results = tagMatchList.filter(student.hasMatch === true)
+    results = tagMatchList.filter((student) => {
+      return student.tagMatch === true
+    })
 
     if (search.length === 0) {
       results = this.state.students;

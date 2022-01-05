@@ -66,14 +66,14 @@ class Student extends Component {
                         <p>Company: {this.props.student.company}</p>
                         <p>Email: {this.props.student.email}</p>
                         <p>Skill: {this.props.student.skill}</p>
-                        <p>Average: {this.props.student.average}</p>
+                        <p>Average: {this.props.student.grades.reduce((a, b) => parseInt(a) + parseInt(b)) / this.props.student.grades.length}</p>
                         {this.state.gradesVisible 
                         ?   
                             <div>
                                 <div className="gradeList">
-                                    {this.props.student.gradeArray.map((grade) => {
+                                    {this.props.student.grades.map((grade) => {
                                         return (
-                                            <p key={grade}>Test {this.props.student.gradeArray.indexOf(grade) + 1}: <span className="grade">{grade}</span>%</p>
+                                            <p key={grade}>Test {this.props.student.grades.indexOf(grade) + 1}: <span className="grade">{grade}</span>%</p>
                                         )
                                     })}
                                 </div>
