@@ -1,54 +1,117 @@
-import './App.css';
-import { useEffect, useState } from 'react'
-import { Card, Button } from 'react-bootstrap';
 import React, { Component } from 'react';
-import Students from './Students.js';
-function App() {
-  useEffect(() => {
-    // GET request using fetch inside useEffect React hook
-    fetch('https://api.hatchways.io/assessment/students')
-      .then(response => response.json())
-      .then(data => setStudents(data.students));
-  }, []);
-  const [students, setStudents] = useState([]);
-  students.forEach((student) => {
-    const studentObj = {
-      pic: student.pic,
-      firstName: student.firstName.toLowerCase(),
-      lastName: student.lastName.toLowerCase(),
-      name: `${student.firstName} ${student.lastName}`,
-      email: student.email,
-      company: student.company,
-      skill: student.skill,
-      grades: student.grades,
-      id: student.id,
-      tags: []
-    }
-    studentArray.push(studentObj)
-  })
+import './App.css';
+import Student from './Student.js'
+import axios from 'axios';
 
-  setStudents(students)
+class App extends Component {
+  constructor() {
+    super();
+    this.state = ({
+
+    })
+  }
+
+
+  componentDidMount = () => {
+    axios({
+      method: "GET",
+      url: "https://www.hatchways.io/api/assessment/students",
+    }).then((res) => {
+      const students = res.data.students;
+      this.studentData(students);
+    })
+  }
+
+  studentData = (students) => {
+    let studentList = []
+    students.forEach((student) => {
+      const stu = {
+        pic: student.pic,
+        firstName: student.firstName.toLowerCase(),
+        lastName: student.lastName.toLowerCase(),
+        name: `${student.firstName} ${student.lastName}`,
+        company: student.company,
+        email: student.email,
+        skill: student.skill,
+        gradeArray: student.grades,
+        key: student.id,
+        tags: []
+      }
+      studentList.push(stu)
+    })
+
+    this.setState({
+      students: studentList,
+      filteredList: studentList
+    })
+  }
 
   setTags = (id, tags) => {
-    this.state.students[id - 1].tags = tags;
-    setStudents(students)
+    const students = this.state.students
+    students[id - 1].tags = tags;
+    this.setState({
+      students
+    })
   }
-  return (
-    <div className="App">
-      <form action="" className="searchForm">
-        <input type="text" placeholder="Search by name" onChange={this.handleNameChange} />
-        <input type="text" placeholder="Search by tag" onChange={this.handleTagChange} />
-      </form>
-      <div>
-        {this.state.studentArray.map((student) => {
-          return (
-            <Student key={student.key} student={student} />
-          )
-        })}
-      </div>
-    </div>
 
-  );
+  handleNameChange = (e) => {
+    const search = e.target.value.toLowerCase();
+    const results = this.state.students.filter(this.props.students.firstName.includes(search) || this.props.students.lastName.includes(search))
+    this.setState({
+      filteredList: results
+    })
+  }
+
+  handleTagChange = (e) => {
+    const search = e.target.value.toLowerCase();
+    let tagMatchList = this.state.students;
+    let filteredList = this.state.students;
+
+
+
+    tagMatchList.forEach((student) => {
+      student.tags.forEach((tag) => {
+        student.hasMatch = false
+        if (tag.includes(search)) {
+          student.hasMatch = true
+        }
+      })
+    })
+
+    results = tagMatchList.filter(student.hasMatch === true)
+
+    if (search.length === 0) {
+      results = this.state.students;
+    }
+
+    this.setState({
+      filteredList: results
+    })
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <div className="studentContainer">
+
+          <form action="" className="searchForm">
+            <input type="text" placeholder="Search by name" onChange={this.handleNameChange} />
+            <input type="text" placeholder="Search by tag" onChange={this.handleTagChange} />
+          </form>
+
+          {this.state.students ?
+            <div>
+              {this.state.filteredList.map((student) => {
+                return (
+                  <Student key={student.key} pic={student.pic} student={student} setTag={this.setTag} />
+                )
+              })}
+            </div>
+            : null}
+        </div>
+      </div>
+    );
+  }
 }
 
 export default App;
