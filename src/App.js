@@ -15,7 +15,7 @@ class App extends Component {
   componentDidMount = () => {
     axios({
       method: "GET",
-      url: "https://www.hatchways.io/api/assessment/students",
+      url: "https://raw.githubusercontent.com/pdanani/studentAPI/main/db.json",
     }).then((res) => {
       const students = res.data.students;
       this.studentData(students);
